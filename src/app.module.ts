@@ -10,6 +10,7 @@ import { MainDatabaseModule } from './services/databases/main-database/main-data
 import { secondaryDatabaseConfig } from './services/databases/secondary-database/secondary-database.config';
 import { SecondaryDatabaseModule } from './services/databases/secondary-database/secondary-database.module';
 import { SnacksModule } from './apps/secondary/snacks/snacks.module';
+import { RolesModule } from './apps/main/roles/roles.module';
 
 @Module({
   imports: [
@@ -30,6 +31,8 @@ import { SnacksModule } from './apps/secondary/snacks/snacks.module';
     SecondaryDatabaseModule,
 
     SnacksModule,
+
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
