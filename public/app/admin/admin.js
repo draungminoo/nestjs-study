@@ -16,13 +16,14 @@ adminSocket.on('disconnect', () => {
 });
 
 adminSocket.on('incoming-bed-request', ({ clientId, bedNo }) => {
-  const ask = confirm(
-    `Do you want to accept ${bedNo} requested by ${clientId}`,
-  );
+  console.log(`Do you want to accept ${bedNo} requested by ${clientId}`);
+  // const ask = confirm(
+  //   `Do you want to accept ${bedNo} requested by ${clientId}`,
+  // );
 
-  if (ask) {
-    adminSocket.emit('accept-bed-no', { clientId, bedNo });
-  }
+  // if (ask) {
+  //   adminSocket.emit('accept-bed-no', { clientId, bedNo });
+  // }
 });
 
 checkConnectionButton.onclick = (e) => {

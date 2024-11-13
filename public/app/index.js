@@ -21,6 +21,6 @@ bedRequestButton.onclick = (e) => {
     const bedNo = bedNoInput.value;
     socket.emit('requst-bed', bedNo);
   } else {
-    alert('Socket is not connected');
+    console.log('Socket is not connected');
   }
 };
