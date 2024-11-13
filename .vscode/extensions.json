@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "pkief.material-icon-theme",
+    "johnpapa.vscode-peacock",
+    "rvest.vs-code-prettier-eslint"
+  ]
+}
