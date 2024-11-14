@@ -4,6 +4,7 @@
     "dbaeumer.vscode-eslint",
     "pkief.material-icon-theme",
     "johnpapa.vscode-peacock",
-    "rvest.vs-code-prettier-eslint"
+    "rvest.vs-code-prettier-eslint",
+    "mikestead.dotenv"
   ]
 }

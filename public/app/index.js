@@ -1,3 +1,4 @@
+import { atob } from 'buffer';
 import { io } from 'https://cdn.socket.io/4.8.0/socket.io.esm.min.js';
 
 const bedRequestButton = document.getElementById('bed-request-button');

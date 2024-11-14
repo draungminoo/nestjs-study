@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { TitlesService } from './titles.service';
 import { CreateTitleDto } from './dto/create-title.dto';
 import { UpdateTitleDto } from './dto/update-title.dto';
+import { Request } from 'express';
 
 @Controller('titles')
 export class TitlesController {
@@ -21,7 +23,8 @@ export class TitlesController {
   }
 
   @Get()
-  findAll() {
+  findAll(@Req() req: Request) {
+    console.log(req.user);
     return this.titlesService.findAll();
   }
 

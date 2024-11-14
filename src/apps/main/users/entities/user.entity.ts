@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity()
 export class User extends AbstractEntity<User> {
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @Column({ nullable: true })
@@ -17,6 +17,6 @@ export class User extends AbstractEntity<User> {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   dateOfBirth: Date;
 }
