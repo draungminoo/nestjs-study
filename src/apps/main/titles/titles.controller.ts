@@ -1,18 +1,18 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Req,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
-import { TitlesService } from './titles.service';
+import { ArePublic } from 'src/guards/policy/decorator/policy.decorator';
 import { CreateTitleDto } from './dto/create-title.dto';
 import { UpdateTitleDto } from './dto/update-title.dto';
-import { Request } from 'express';
+import { TitlesService } from './titles.service';
 
+@ArePublic()
 @Controller('titles')
 export class TitlesController {
   constructor(private readonly titlesService: TitlesService) {}
@@ -23,8 +23,7 @@ export class TitlesController {
   }
 
   @Get()
-  findAll(@Req() req: Request) {
-    console.log(req.user);
+  findAll() {
     return this.titlesService.findAll();
   }
 

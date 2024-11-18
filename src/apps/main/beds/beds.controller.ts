@@ -13,6 +13,7 @@ import { UpdateBedDto } from './dto/update-bed.dto';
 import { CreateBedPayloadPipe } from './pipes/create-bed-payload.pipe';
 import { BedsGateway } from './beds.gateway';
 import { BedsAdminGateway } from './beds-admin.gateway';
+import { IsOnlyForAdmin } from 'src/guards/policy/decorator/policy.decorator';
 
 @Controller('beds')
 export class BedsController {
@@ -46,6 +47,7 @@ export class BedsController {
   }
 
   @Get()
+  @IsOnlyForAdmin()
   findAll() {
     return this.bedsService.findAll();
   }

@@ -17,6 +17,6 @@ export const AppEnvValues = {
   JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
 
   // token
-  ACCESS_TOKEN_EXP_SECOND: 60 * 15,
+  ACCESS_TOKEN_EXP_SECOND: 60 * 60,
   REFRESH_TOKEN_EXP_SECOND: 86_400 * 7,
 };

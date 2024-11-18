@@ -4,12 +4,17 @@ import { sign } from 'jsonwebtoken';
 import { AppEnvValues } from 'src/resources/env/app.env';
 import { UsersService } from '../users/users.service';
 import { SigninPayloadType, TokenPayloadType } from './auth.type';
+import { CryptoJsService } from 'src/services/individual/crypto/crypto-js.service';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private cryptoJsService: CryptoJsService,
+    private usersService: UsersService,
+  ) {}
 
-  async signinUser(payload: SigninPayloadType, ip: string) {
+  async signinUser(req: Request, payload: SigninPayloadType) {
     const user = await this.usersService.findOne({
       where: { username: payload.username },
     });
@@ -20,11 +25,16 @@ export class AuthService {
       throw new UnauthorizedException(`Password is incorrect`);
     }
 
+    const userAgentHex = this.cryptoJsService.hexString(
+      req.headers['user-agent'],
+    );
+
     // generate access token
     const accessTokenPayload: TokenPayloadType = {
       tp: 0,
       uid: user.id,
-      ip: ip,
+      ip: req.ip,
+      usa: userAgentHex,
     };
     const accessToken = sign(accessTokenPayload, AppEnvValues.JWT_SECRET_KEY, {
       expiresIn: AppEnvValues.ACCESS_TOKEN_EXP_SECOND,
@@ -34,7 +44,8 @@ export class AuthService {
     const refreshTokenPayload: TokenPayloadType = {
       tp: 1,
       uid: user.id,
-      ip: ip,
+      ip: req.ip,
+      usa: userAgentHex,
     };
     const refreshToken = sign(
       refreshTokenPayload,

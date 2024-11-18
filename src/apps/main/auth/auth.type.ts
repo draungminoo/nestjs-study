@@ -7,4 +7,5 @@ export type TokenPayloadType = {
   tp: 0 | 1;
   uid: number;
   ip: string;
+  usa: string;
 };
