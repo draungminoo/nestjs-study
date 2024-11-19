@@ -1,3 +1,8 @@
+import {
+  AbilityBuilder,
+  createMongoAbility,
+  fieldPatternMatcher,
+} from '@casl/ability';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { methods } from './app.data';

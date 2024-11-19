@@ -7,15 +7,24 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import {
+  RegisterExternalPolicy,
+  RegisterRule,
+} from 'src/guards/policy/decorator/policy.decorator';
+import { BedsAdminGateway } from './beds-admin.gateway';
+import { BedsGateway } from './beds.gateway';
 import { BedsService } from './beds.service';
 import { CreateBedDto } from './dto/create-bed.dto';
 import { UpdateBedDto } from './dto/update-bed.dto';
 import { CreateBedPayloadPipe } from './pipes/create-bed-payload.pipe';
-import { BedsGateway } from './beds.gateway';
-import { BedsAdminGateway } from './beds-admin.gateway';
-import { IsOnlyForAdmin } from 'src/guards/policy/decorator/policy.decorator';
+import {
+  BedsExternalPolicyFactory,
+  ReadBedsRule,
+  WriteBedsRule,
+} from './policy/beds-external.policy';
 
 @Controller('beds')
+@RegisterExternalPolicy(BedsExternalPolicyFactory)
 export class BedsController {
   constructor(
     private bedsAdminGateway: BedsAdminGateway,
@@ -42,27 +51,31 @@ export class BedsController {
   }
 
   @Post()
+  @RegisterRule(WriteBedsRule)
   create(@Body(CreateBedPayloadPipe) createBedDto: CreateBedDto) {
     return this.bedsService.create(createBedDto);
   }
 
   @Get()
-  @IsOnlyForAdmin()
+  @RegisterRule(ReadBedsRule)
   findAll() {
     return this.bedsService.findAll();
   }
 
   @Get(':id')
+  @RegisterRule(ReadBedsRule)
   findOne(@Param('id') id: string) {
     return this.bedsService.findOne(+id);
   }
 
   @Patch(':id')
+  @RegisterRule(WriteBedsRule)
   update(@Param('id') id: string, @Body() updateBedDto: UpdateBedDto) {
     return this.bedsService.update(+id, updateBedDto);
   }
 
   @Delete(':id')
+  @RegisterRule(WriteBedsRule)
   remove(@Param('id') id: string) {
     return this.bedsService.remove(+id);
   }

@@ -2,14 +2,26 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { CryptoJsService } from 'src/services/individual/crypto/crypto-js.service';
+import {
+  EXTERNAL_POLICY_FACTORY,
+  REQUIRED_RULE,
+} from './decorator/policy.decorator';
+import { PolicyFactoryType, RequiredRulesType } from './policy.type';
+import { ForbiddenError } from '@casl/ability';
 
 @Injectable()
 export class PolicyGuard implements CanActivate {
-  constructor(private cryptoJsService: CryptoJsService) {}
+  constructor(
+    private cryptoJsService: CryptoJsService,
+    private reflector: Reflector,
+    private logger: Logger,
+  ) {}
 
   async canActivate(context: ExecutionContext) {
     const req: Request = context.switchToHttp().getRequest();
@@ -57,7 +69,27 @@ export class PolicyGuard implements CanActivate {
     }
 
     // rules
-    // =======
+    // get policy factory
+    const policyFactory = this.reflector.getAllAndOverride(
+      EXTERNAL_POLICY_FACTORY,
+      [context.getClass(), context.getHandler()],
+    ) as PolicyFactoryType;
+
+    if (policyFactory) {
+      const ability = policyFactory(context, this.reflector, this.logger);
+      const rules = this.reflector.get(
+        REQUIRED_RULE,
+        context.getHandler(),
+      ) as RequiredRulesType<any, any, any>[];
+
+      rules.forEach((rule) => {
+        ForbiddenError.from(ability).throwUnlessCan(
+          rule.action,
+          rule.subject,
+          rule.fileds,
+        );
+      });
+    }
 
     return true;
   }
