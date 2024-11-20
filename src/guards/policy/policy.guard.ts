@@ -1,6 +1,8 @@
+import { ForbiddenError } from '@casl/ability';
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -13,7 +15,6 @@ import {
   REQUIRED_RULE,
 } from './decorator/policy.decorator';
 import { PolicyFactoryType, RequiredRulesType } from './policy.type';
-import { ForbiddenError } from '@casl/ability';
 
 @Injectable()
 export class PolicyGuard implements CanActivate {
@@ -31,13 +32,18 @@ export class PolicyGuard implements CanActivate {
       return true;
     }
 
+    // is there user
+    if (!req.user) {
+      throw new UnauthorizedException(`User does not exist`);
+    }
+
     // is user valid
-    if (!req.user?.active) {
+    if (!req.user.active) {
       throw new UnauthorizedException(`User account is inactive`);
     }
 
     // is user account locked
-    if (req.user?.isLocked) {
+    if (req.user.isLocked) {
       throw new UnauthorizedException(`User account is locked`);
     }
 
@@ -82,13 +88,17 @@ export class PolicyGuard implements CanActivate {
         context.getHandler(),
       ) as RequiredRulesType<any, any, any>[];
 
-      rules.forEach((rule) => {
-        ForbiddenError.from(ability).throwUnlessCan(
-          rule.action,
-          rule.subject,
-          rule.fileds,
-        );
-      });
+      try {
+        rules?.forEach((rule) => {
+          ForbiddenError.from(ability).throwUnlessCan(
+            rule.action,
+            rule.subject,
+            rule.fileds,
+          );
+        });
+      } catch (error) {
+        throw new ForbiddenException(error);
+      }
     }
 
     return true;

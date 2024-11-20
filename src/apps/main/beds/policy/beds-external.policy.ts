@@ -28,9 +28,10 @@ export function BedsExternalPolicyFactory(
   const user = req.user;
 
   if (user?.isAdmin) {
-    can(CaslActionsEnum.MANAGE, Bed);
+    can(CaslActionsEnum.MANAGE, Bed); // .because(`You are admin`);
   } else {
-    // can(CaslActionsEnum.READ, Bed);
+    can(CaslActionsEnum.READ, Bed);
+    // cannot(CaslActionsEnum.READ, Bed).because(`You are not admin`);
   }
 
   return build();
