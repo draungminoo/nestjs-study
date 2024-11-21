@@ -5,6 +5,8 @@ import { PolicyGuard } from '../policy/policy.guard';
 
 @Injectable()
 export class AppGuard implements CanActivate {
+  private staticRoutes: string[] = ['/app', '/assets'];
+
   constructor(
     private assignReqGuard: AssignReqGuard,
     private policyGuard: PolicyGuard,
@@ -12,6 +14,10 @@ export class AppGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext) {
     const req: Request = context.switchToHttp().getRequest();
+
+    if (this.staticRoutes.some((s) => req.path.startsWith(s))) {
+      return true;
+    }
 
     const reqAssigned = await this.assignReqGuard.canActivate(context);
     const isPolicyPassed = await this.policyGuard.canActivate(context);

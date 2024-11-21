@@ -1,9 +1,10 @@
-import { Logger, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './apps/main/auth/auth.module';
+import { TokenPayloadType } from './apps/main/auth/auth.type';
 import { BedsModule } from './apps/main/beds/beds.module';
 import { RolesModule } from './apps/main/roles/roles.module';
 import { TitlesModule } from './apps/main/titles/titles.module';
@@ -12,6 +13,9 @@ import { UsersModule } from './apps/main/users/users.module';
 import { WardsModule } from './apps/main/wards/wards.module';
 import { SnacksModule } from './apps/secondary/snacks/snacks.module';
 import { AppGuard } from './guards/app-guard/app-guard.guard';
+import { AssignReqGuard } from './guards/assign-req/assign-req.guard';
+import { PolicyGuard } from './guards/policy/policy.guard';
+import { LoggerMiddleware } from './middlewares/logger/logger.middleware';
 import { DatabaseEnums } from './resources/enums/database.enum';
 import { AjvModule } from './services/global/ajv/ajv.module';
 import { TokenModule } from './services/global/token/token.module';
@@ -20,9 +24,7 @@ import { mainDatabaseConfig } from './services/individual/databases/main-databas
 import { MainDatabaseModule } from './services/individual/databases/main-database/main-database.module';
 import { secondaryDatabaseConfig } from './services/individual/databases/secondary-database/secondary-database.config';
 import { SecondaryDatabaseModule } from './services/individual/databases/secondary-database/secondary-database.module';
-import { AssignReqGuard } from './guards/assign-req/assign-req.guard';
-import { PolicyGuard } from './guards/policy/policy.guard';
-import { TokenPayloadType } from './apps/main/auth/auth.type';
+import { MongodbService } from './services/individual/mongodb/mongodb.service';
 
 declare global {
   namespace Express {
@@ -66,6 +68,12 @@ declare global {
     Logger,
 
     { provide: APP_GUARD, useClass: AppGuard },
+
+    MongodbService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
